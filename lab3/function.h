@@ -5,6 +5,8 @@
 
 using namespace std;
 
+
+
 //input map data
 //enter start and end points
 //algorithm, priority queue, heuristics
@@ -13,25 +15,29 @@ using namespace std;
 
 //const int INF = 99999;
 
+
+
 struct Node
 {
 	int x, y;
 	char type;
 };
 
+
+
 void input_data()
 {
-	int width, 
-		height, 
+	int width,
+		height,
 		map_area;
 
 	ifstream inFile("input.txt");
 	if (!inFile.is_open()) { cout << "Error. Cannot open file\n"; return; }
-	
+
 	inFile >> width >> height;
 	map_area = width * height;
-	Node* point = new Node[map_area];
-	
+	Node *point = new Node[map_area];
+
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -39,7 +45,7 @@ void input_data()
 			char node;
 			inFile >> node;
 			cout << node;//
-			
+
 			point[(i * height) + j] = { j + 1, i + 1, node };
 		}
 		cout << "\n";//
@@ -51,6 +57,24 @@ void input_data()
 		cout << point[i].y << "\t";
 		cout << point[i].type << endl;
 	}
+}
+
+
+
+void enter_points()
+{
+	Node start,
+		finish;
+
+	// 2 7
+	cout << "\nEnter start point coordinates:" << endl;
+	cout << "\nx= "; cin >> start.x;
+	cout << "\ny= "; cin >> start.y;
+
+	// 7 2
+	cout << "\nEnter finish point coordinates:" << endl;
+	cout << "\nx= "; cin >> finish.x;
+	cout << "\ny= "; cin >> finish.y;
 }
 
 
