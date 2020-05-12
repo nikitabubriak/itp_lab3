@@ -19,8 +19,68 @@ using namespace std;
 
 struct Node
 {
+	
 	int x, y;
 	char type;
+
+	int priority;
+	
+	struct Node *next;
+};
+
+
+
+class PriorityQueue
+{
+	Node *k;
+
+public:
+
+	PriorityQueue()
+	{
+
+		k = NULL;
+	}
+
+	void push(Node *point, int p)
+	{
+		Node *n, *m;
+		n = new Node;
+		n->priority = p;
+		if (k == NULL || p < k->priority)
+		{
+			n->next = k;
+			k = n;
+		}
+		else
+		{
+			m = k;
+			while (m->next != NULL && m->next->priority <= p)
+				m = m->next;
+			n->next = m->next;
+			m->next = n;
+		}
+	}
+
+	Node pop()
+	{
+		Node *n;
+		if (k == NULL)
+			cout << "Queue underflow\n";
+		else
+		{
+			n = k;
+			k = k->next;
+			return *n;
+		}
+	}
+
+	bool is_empty()
+	{
+		Node *p;
+		p = k;
+		if (k == NULL) { return true; }
+	}
 };
 
 
@@ -76,18 +136,6 @@ void enter_points()
 	cout << "\nx= "; cin >> finish.x;
 	cout << "\ny= "; cin >> finish.y;
 }
-
-
-
-/*class PriorityQueue
-{
-	int data[100],
-		head,
-		tail;
-public:
-	void push(int);
-	int pop();
-};*/
 
 
 
