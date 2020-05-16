@@ -56,7 +56,7 @@ public:
 		Node *m;
 		n->priority = p;
 
-		if (k == NULL || p < k->priority)
+		if (k == NULL || p > k->priority)
 		{
 			n->q_next = k;
 			k = n;
@@ -66,7 +66,7 @@ public:
 		{
 			m = k;
 
-			while (m->q_next != NULL && m->q_next->priority <= p)
+			while (m->q_next != NULL && m->q_next->priority >= p)
 			{
 				m = m->q_next;
 			}
@@ -97,8 +97,8 @@ public:
 
 	bool is_empty()
 	{
-		Node *p;
-		p = k;
+		Node *ptr;
+		ptr = k;
 
 		if (k == NULL)
 		{
@@ -108,7 +108,6 @@ public:
 
 		else 
 		{
-			cout << "\nQueue is not empty\n";//<<<<<<<
 			return false;
 		}
 	}
@@ -131,13 +130,14 @@ int main()
 
 	Node *point = new Node[area];
 
+	cout << "Map:\n\n";
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
 			char node;
 			inFile >> node;
-			cout << node;//
+			cout << node << " ";//
 
 			point[(i * height) + j] = { j + 1, i + 1, node };
 			//point[(i * height) + j]->x = j + 1;
@@ -148,12 +148,12 @@ int main()
 	}
 
 	inFile.close();
-	for (int i = 0; i < area; i++)//
+	/*for (int i = 0; i < area; i++)
 	{
 		cout << point[i].x << "\t";
 		cout << point[i].y << "\t";
 		cout << point[i].type << endl;
-	}
+	}*/
 
 	Node start,
 		finish;
@@ -187,6 +187,8 @@ int main()
 		}
 	}
 
+	cout << "\nStart>    x= " << start.x << "\ty= " << start.y << endl;
+	cout << "\nFinish>   x= " << finish.x << "\ty= " << finish.y << "\n\n\n Finding path...\n\n" << endl;
 
 	AStar(pstart, finish, point);
 
@@ -200,10 +202,7 @@ vector<Node> Neighbors(Node current, Node *point, vector<Node> &visitedPoint)
 {
 	vector<Node> neighborsOpen;
 
-	Node directions[4] = { Node{ 1, 0 }, Node{ 0, 1 }, Node{ -1, 0 }, Node{ 0, -1 } };
-
-	//  { Node{ 1, 0 }, Node{ 0, -1 }, Node{ -1, 0 }, Node{ 0, 1 } };
-	//  { Node{ 1, 0 }, Node{ 0, 1 }, Node{ -1, 0 }, Node{ 0, -1 } };
+	Node directions[4] = { Node{ -1, 0 }, Node{ 0, 1 }, Node{ 1, 0 }, Node{ 0, -1 } };
 
 	for (Node direction : directions)
 	{
@@ -220,7 +219,7 @@ vector<Node> Neighbors(Node current, Node *point, vector<Node> &visitedPoint)
 
 		if (next.type == '.')
 		{
-			for (int i = 0; i < visitedPoint.size()-1; i++)
+			for (int i = 0; i < visitedPoint.size(); i++)
 			{
 				if (next.x == visitedPoint[i].x && next.y == visitedPoint[i].y && visitedPoint[i].visited == true)
 				{
@@ -256,41 +255,41 @@ void AStar (Node *start, Node finish, Node *point)
 
 	start->distance_total = 0;
 
-	int i = 0;
-	while (!queue.is_empty() && i<30)
+	//int i = 0;
+	while (!queue.is_empty())// && i<30)
 	{
-		i++;
+		//i++;
 		Node current = queue.pop();
 
 		current.visited = true;
 		visitedPoint.push_back(current);
 
-		if (current.x == finish.x && current.y == finish.y) { break;}
+		if (current.x == finish.x && current.y == finish.y) { cout << "\nReached finish point\n" << endl; break; }
 
-		cout << "\nCurrent  " << current.x << "\t" << current.y << "\t" << current.type << "\t" << current.visited << "\n" << endl;
+		cout << "\nCurrent>  " << current.x << "\t" << current.y << "\t" << current.type << "\t" << current.visited << "\n" << endl;
 
 		for (Node next : Neighbors(current, point, visitedPoint))
 		{
-			cout << "Neighbor " << next.x << "\t" << next.y << "\t" << next.type << "\t" << next.visited << endl;
+			cout << "Neighbor> " << next.x << "\t" << next.y << "\t" << next.type << "\t" << next.visited << endl;
 			
 			//if (next.visited = true) { continue;}
 
 			//next.visited = true;
 			Node *pnext = &next;
-			Node *pcurrent = &current;
+			//Node *pcurrent = &current;
 
 			int distance_new = current.distance_total + 1;
 			
 			
-			if (next.distance_total == INF || distance_new < next.distance_total)
+			if (next.distance_total == INF)// && current.priority >= next.priority) //|| distance_new < next.distance_total)
 			//if(distance_new < INF)
 			{
 				pnext->distance_total = distance_new;
-				int priority = distance_new + Heuristics(next, finish);
-				cout << "    ===\n";
+				int npriority = distance_new + Heuristics(next, finish);
+				cout << "---------\n\n";
 				
 				//pnext->visited = true;
-				queue.push(pnext, priority);
+				queue.push(pnext, npriority);
 			}
 		}
 	}
@@ -298,12 +297,12 @@ void AStar (Node *start, Node finish, Node *point)
 	//for (int i = 0; i < visitedPoint.size() - 1; i++) { cout << visitedPoint[i].x << visitedPoint[i].y << visitedPoint[i].type << endl; }
 
 	char path[26];
-	for (i = 0; i < 26; i++)
+	for (int i = 0; i < 26; i++)
 	{
 		path[i] = i + 97;
 	}
 
-	for (int k = 0; k < visitedPoint.size() - 1; k++)
+	for (int k = 0; k < visitedPoint.size(); k++)
 	{
 		for (int i = 0; i < 8; i++)
 		{
@@ -317,12 +316,14 @@ void AStar (Node *start, Node finish, Node *point)
 		}
 
 	}
-	for (int i = 0; i < 8; i++)
+
+	cout << "Path:\n\n";
+
+	for (int i = 0; i < sizeof(point); i++)
 	{
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < sizeof(point); j++)
 		{
-			
-			cout << point[(i * 8) + j].type;
+			cout << point[(i * sizeof(point)) + j].type << " ";
 		}
 		cout << "\n";
 	}
